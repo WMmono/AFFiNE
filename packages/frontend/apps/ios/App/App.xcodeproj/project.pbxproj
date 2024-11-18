@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		505B0A342CEB3FB10092FC35 /* Intelligents in Frameworks */ = {isa = PBXBuildFile; productRef = 505B0A332CEB3FB10092FC35 /* Intelligents */; };
+		505B0A362CEB48B10092FC35 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505B0A352CEB48B10092FC35 /* RootViewController.swift */; };
 		9D6A85332CCF6DA700DAB35F /* HashcashPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6A85322CCF6DA700DAB35F /* HashcashPlugin.swift */; };
 		9D90BE252CCB9876006677DB /* CookieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D90BE172CCB9876006677DB /* CookieManager.swift */; };
 		9D90BE262CCB9876006677DB /* CookiePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D90BE182CCB9876006677DB /* CookiePlugin.swift */; };
-		9D90BE272CCB9876006677DB /* AFFiNEViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D90BE1B2CCB9876006677DB /* AFFiNEViewController.swift */; };
+		9D90BE272CCB9876006677DB /* AffineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D90BE1B2CCB9876006677DB /* AffineViewController.swift */; };
 		9D90BE282CCB9876006677DB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D90BE1C2CCB9876006677DB /* AppDelegate.swift */; };
 		9D90BE292CCB9876006677DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D90BE1D2CCB9876006677DB /* Assets.xcassets */; };
 		9D90BE2A2CCB9876006677DB /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 9D90BE1E2CCB9876006677DB /* capacitor.config.json */; };
@@ -27,10 +29,12 @@
 
 /* Begin PBXFileReference section */
 		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		505B0A312CEB3FAB0092FC35 /* Intelligents */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Intelligents; sourceTree = "<group>"; };
+		505B0A352CEB48B10092FC35 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		9D6A85322CCF6DA700DAB35F /* HashcashPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashcashPlugin.swift; sourceTree = "<group>"; };
 		9D90BE172CCB9876006677DB /* CookieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieManager.swift; sourceTree = "<group>"; };
 		9D90BE182CCB9876006677DB /* CookiePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookiePlugin.swift; sourceTree = "<group>"; };
-		9D90BE1B2CCB9876006677DB /* AFFiNEViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AFFiNEViewController.swift; sourceTree = "<group>"; };
+		9D90BE1B2CCB9876006677DB /* AffineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffineViewController.swift; sourceTree = "<group>"; };
 		9D90BE1C2CCB9876006677DB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9D90BE1D2CCB9876006677DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9D90BE1E2CCB9876006677DB /* capacitor.config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
@@ -55,6 +59,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C4C97C6E2D0304D100BC2AD1 /* libaffine_mobile_native.a in Frameworks */,
+				505B0A342CEB3FB10092FC35 /* Intelligents in Frameworks */,
 				C4C413792CBE705D00337889 /* Pods_App.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -81,7 +86,6 @@
 				7F8756D8B27F46E3366F6CEA /* Pods */,
 				27E2DDA53C4D2A4D1A88CE4A /* Frameworks */,
 			);
-			indentWidth = 2;
 			sourceTree = "<group>";
 			tabWidth = 2;
 		};
@@ -91,6 +95,14 @@
 				504EC3041FED79650016851F /* App.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		505B0A322CEB3FAB0092FC35 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				505B0A312CEB3FAB0092FC35 /* Intelligents */,
+			);
+			path = Packages;
 			sourceTree = "<group>";
 		};
 		7F8756D8B27F46E3366F6CEA /* Pods */ = {
@@ -112,20 +124,22 @@
 			path = Cookie;
 			sourceTree = "<group>";
 		};
-		9D90BE1A2CCB9876006677DB /* plugins */ = {
+		9D90BE1A2CCB9876006677DB /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
 				E93B276A2CED9298001409B8 /* NavigationGesture */,
 				9D90BE192CCB9876006677DB /* Cookie */,
 			);
-			path = plugins;
+			path = Plugins;
 			sourceTree = "<group>";
 		};
 		9D90BE242CCB9876006677DB /* App */ = {
 			isa = PBXGroup;
 			children = (
-				9D90BE1A2CCB9876006677DB /* plugins */,
-				9D90BE1B2CCB9876006677DB /* AFFiNEViewController.swift */,
+				505B0A322CEB3FAB0092FC35 /* Packages */,
+				9D90BE1A2CCB9876006677DB /* Plugins */,
+				9D90BE1B2CCB9876006677DB /* AffineViewController.swift */,
+				505B0A352CEB48B10092FC35 /* RootViewController.swift */,
 				9D90BE1C2CCB9876006677DB /* AppDelegate.swift */,
 				9D90BE1D2CCB9876006677DB /* Assets.xcassets */,
 				9D90BE1E2CCB9876006677DB /* capacitor.config.json */,
@@ -293,8 +307,9 @@
 				E93B276C2CED92B1001409B8 /* NavigationGesturePlugin.swift in Sources */,
 				9D90BE252CCB9876006677DB /* CookieManager.swift in Sources */,
 				9D90BE262CCB9876006677DB /* CookiePlugin.swift in Sources */,
+				505B0A362CEB48B10092FC35 /* RootViewController.swift in Sources */,
 				9D6A85332CCF6DA700DAB35F /* HashcashPlugin.swift in Sources */,
-				9D90BE272CCB9876006677DB /* AFFiNEViewController.swift in Sources */,
+				9D90BE272CCB9876006677DB /* AffineViewController.swift in Sources */,
 				9D90BE282CCB9876006677DB /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -441,7 +456,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 73YMMDVT2M;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -476,7 +491,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 73YMMDVT2M;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -521,6 +536,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		505B0A332CEB3FB10092FC35 /* Intelligents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Intelligents;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 504EC2FC1FED79650016851F /* Project object */;
 }
