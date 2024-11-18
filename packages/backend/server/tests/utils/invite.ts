@@ -2,7 +2,7 @@ import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 
 import type { InvitationType } from '../../src/core/workspaces';
-import { gql } from './common';
+import { gqlEndpoint } from './common';
 import { PermissionEnum } from './utils';
 
 export async function inviteUser(
@@ -14,7 +14,7 @@ export async function inviteUser(
   sendInviteMail = false
 ): Promise<string> {
   const res = await request(app.getHttpServer())
-    .post(gql)
+    .post(gqlEndpoint)
     .auth(token, { type: 'bearer' })
     .set({ 'x-request-id': 'test', 'x-operation-name': 'test' })
     .send({
@@ -39,7 +39,7 @@ export async function inviteUsers(
   sendInviteMail = false
 ): Promise<Array<{ email: string; inviteId?: string; sentSuccess?: boolean }>> {
   const res = await request(app.getHttpServer())
-    .post(gql)
+    .post(gqlEndpoint)
     .auth(token, { type: 'bearer' })
     .set({ 'x-request-id': 'test', 'x-operation-name': 'test' })
     .send({
@@ -100,7 +100,7 @@ export async function createInviteLink(
   expireTime: 'OneDay' | 'ThreeDays' | 'OneWeek' | 'OneMonth'
 ): Promise<{ link: string; expireTime: string }> {
   const res = await request(app.getHttpServer())
-    .post(gql)
+    .post(gqlEndpoint)
     .auth(token, { type: 'bearer' })
     .set({ 'x-request-id': 'test', 'x-operation-name': 'test' })
     .send({
@@ -151,7 +151,7 @@ export async function acceptInviteById(
   token: string = ''
 ): Promise<boolean> {
   const res = await request(app.getHttpServer())
-    .post(gql)
+    .post(gqlEndpoint)
     .set({ 'x-request-id': 'test', 'x-operation-name': 'test' })
     .auth(token, { type: 'bearer' })
     .send({
@@ -203,7 +203,7 @@ export async function leaveWorkspace(
   sendLeaveMail = false
 ): Promise<boolean> {
   const res = await request(app.getHttpServer())
-    .post(gql)
+    .post(gqlEndpoint)
     .auth(token, { type: 'bearer' })
     .set({ 'x-request-id': 'test', 'x-operation-name': 'test' })
     .send({
@@ -227,7 +227,7 @@ export async function revokeUser(
   userId: string
 ): Promise<boolean> {
   const res = await request(app.getHttpServer())
-    .post(gql)
+    .post(gqlEndpoint)
     .auth(token, { type: 'bearer' })
     .set({ 'x-request-id': 'test', 'x-operation-name': 'test' })
     .send({
@@ -252,7 +252,7 @@ export async function getInviteInfo(
   inviteId: string
 ): Promise<InvitationType> {
   const res = await request(app.getHttpServer())
-    .post(gql)
+    .post(gqlEndpoint)
     .auth(token, { type: 'bearer' })
     .set({ 'x-request-id': 'test', 'x-operation-name': 'test' })
     .send({
