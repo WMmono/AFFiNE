@@ -8,6 +8,7 @@ import type { WorkspaceOpenOptions } from '../open-options';
 import type { WorkspaceEngineProvider } from '../providers/flavour';
 import { WorkspaceScope } from '../scopes/workspace';
 import type { WorkspaceFlavoursService } from './flavours';
+import type { WorkspaceListService } from './list';
 import type { WorkspaceProfileService } from './profile';
 import { WorkspaceService } from './workspace';
 
@@ -16,7 +17,8 @@ const logger = new DebugLogger('affine:workspace-repository');
 export class WorkspaceRepositoryService extends Service {
   constructor(
     private readonly flavoursService: WorkspaceFlavoursService,
-    private readonly profileRepo: WorkspaceProfileService
+    private readonly profileRepo: WorkspaceProfileService,
+    private readonly workspacesListService: WorkspaceListService
   ) {
     super();
   }
@@ -72,6 +74,12 @@ export class WorkspaceRepositoryService extends Service {
       workspace: ref.obj,
       dispose: ref.release,
     };
+  };
+
+  openByWorkspaceId = (workspaceId: string) => {
+    const workspaceMetadata =
+      this.workspacesListService.list.workspace$(workspaceId).value;
+    return workspaceMetadata && this.open({ metadata: workspaceMetadata });
   };
 
   instantiate(

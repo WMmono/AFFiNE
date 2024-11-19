@@ -41,6 +41,10 @@ export class WorkspacesService extends Service {
     return this.workspaceRepo.open;
   }
 
+  get openByWorkspaceId() {
+    return this.workspaceRepo.openByWorkspaceId;
+  }
+
   get create() {
     return this.workspaceFactory.create;
   }

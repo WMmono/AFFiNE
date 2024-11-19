@@ -23,15 +23,24 @@ import {
   configureBrowserWorkspaceFlavours,
   configureIndexedDBWorkspaceEngineStorageProvider,
 } from '@affine/core/modules/workspace-engine';
+import {
+  docLinkBaseURLMiddleware,
+  MarkdownAdapter,
+  titleMiddleware,
+} from '@blocksuite/affine/blocks';
+import { Job } from '@blocksuite/affine/store';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { Haptics } from '@capacitor/haptics';
 import { Keyboard } from '@capacitor/keyboard';
 import {
+  DocsService,
   Framework,
   FrameworkRoot,
   getCurrentStore,
+  GlobalContextService,
   LifecycleService,
+  WorkspacesService,
 } from '@toeverything/infra';
 import { Suspense } from 'react';
 import { RouterProvider } from 'react-router-dom';
@@ -119,7 +128,54 @@ framework.impl(AIButtonProvider, {
     return Intelligents.dismissIntelligentsButton();
   },
 });
+
 const frameworkProvider = framework.provider();
+
+(window as any).getCurrentDocContentInMarkdown = async () => {
+  const globalContextService = frameworkProvider.get(GlobalContextService);
+  const currentWorkspaceId =
+    globalContextService.globalContext.workspaceId.get();
+  const currentDocId = globalContextService.globalContext.docId.get();
+  const workspacesService = frameworkProvider.get(WorkspacesService);
+  const workspaceRef = currentWorkspaceId
+    ? workspacesService.openByWorkspaceId(currentWorkspaceId)
+    : null;
+  if (!workspaceRef) {
+    return;
+  }
+  const { workspace, dispose: disposeWorkspace } = workspaceRef;
+
+  const docsService = workspace.scope.get(DocsService);
+  const docRef = currentDocId ? docsService.open(currentDocId) : null;
+  if (!docRef) {
+    return;
+  }
+  const { doc, release: disposeDoc } = docRef;
+
+  try {
+    const blockSuiteDoc = doc.blockSuiteDoc;
+
+    const job = new Job({
+      collection: blockSuiteDoc.collection,
+      middlewares: [docLinkBaseURLMiddleware, titleMiddleware],
+    });
+    const snapshot = job.docToSnapshot(blockSuiteDoc);
+
+    const adapter = new MarkdownAdapter(job);
+    if (!snapshot) {
+      return;
+    }
+
+    const markdownResult = await adapter.fromDocSnapshot({
+      snapshot,
+      assets: job.assetsManager,
+    });
+    return markdownResult.file;
+  } finally {
+    disposeDoc();
+    disposeWorkspace();
+  }
+};
 
 // setup application lifecycle events, and emit application start event
 window.addEventListener('focus', () => {
