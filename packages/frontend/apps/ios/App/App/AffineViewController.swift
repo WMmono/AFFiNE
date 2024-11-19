@@ -15,16 +15,16 @@ class AFFiNEViewController: CAPBridgeViewController {
     bridge?.registerPluginInstance(CookiePlugin())
     bridge?.registerPluginInstance(HashcashPlugin())
     bridge?.registerPluginInstance(NavigationGesturePlugin())
+    bridge?.registerPluginInstance(IntelligentsPlugin(ui: self))
   }
   
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     navigationController?.setNavigationBarHidden(false, animated: animated)
-    self.presentIntelligentsButton()
+    self.dismissIntelligentsButton()
   }
   
   override func viewDidDisappear(_ animated: Bool) {
     super.viewDidDisappear(animated)
-    dismissIntelligentsButton()
   }
 }

@@ -6,6 +6,7 @@ import { NavigationGestureProvider } from '@affine/core/mobile/modules/navigatio
 import { VirtualKeyboardProvider } from '@affine/core/mobile/modules/virtual-keyboard';
 import { router } from '@affine/core/mobile/router';
 import { configureCommonModules } from '@affine/core/modules';
+import { AIButtonProvider } from '@affine/core/modules/ai-button';
 import {
   AuthService,
   DefaultServerService,
@@ -39,6 +40,7 @@ import { configureFetchProvider } from './fetch';
 import { ModalConfigProvider } from './modal-config';
 import { Cookie } from './plugins/cookie';
 import { Hashcash } from './plugins/hashcash';
+import { Intelligents } from './plugins/intelligents';
 import { NavigationGesture } from './plugins/navigation-gesture';
 
 const future = {
@@ -108,6 +110,14 @@ framework.impl(HapticProvider, {
   selectionStart: () => Haptics.selectionStart(),
   selectionChanged: () => Haptics.selectionChanged(),
   selectionEnd: () => Haptics.selectionEnd(),
+});
+framework.impl(AIButtonProvider, {
+  presentAIButton: () => {
+    return Intelligents.presentIntelligentsButton();
+  },
+  dismissAIButton: () => {
+    return Intelligents.dismissIntelligentsButton();
+  },
 });
 const frameworkProvider = framework.provider();
 
