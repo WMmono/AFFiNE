@@ -7,13 +7,18 @@ let package = Package(
   name: "Intelligents",
   defaultLocalization: "en",
   platforms: [
-    .iOS(.v14),
-    .macCatalyst(.v14),
+    .iOS(.v15),
+    .macCatalyst(.v15),
   ],
   products: [
     .library(name: "Intelligents", targets: ["Intelligents"]),
   ],
+  dependencies: [
+    .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.4.1"),
+  ],
   targets: [
-    .target(name: "Intelligents"),
+    .target(name: "Intelligents", dependencies: [
+      .product(name: "MarkdownUI", package: "swift-markdown-ui"),
+    ]),
   ]
 )

@@ -44,6 +44,7 @@ public extension UIViewController {
     button.alpha = 0
     button.isHidden = false
     button.setNeedsLayout()
+    button.stopProgress()
     view.layoutIfNeeded()
 
     UIView.animate(
@@ -63,6 +64,7 @@ public extension UIViewController {
     guard let button = findIntelligentsButton() else { return }
     print("[*] \(button) is calling \(#function)")
 
+    button.stopProgress()
     button.setNeedsLayout()
     view.layoutIfNeeded()
     UIView.animate(

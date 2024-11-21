@@ -11,6 +11,7 @@ extension ChatTableView {
   struct DataElement {
     enum CellType: String, CaseIterable {
       case base
+      case chat
     }
 
     let type: CellType
@@ -28,6 +29,8 @@ extension ChatTableView.DataElement.CellType {
     switch self {
     case .base:
       ChatTableView.BaseCell.self
+    case .chat:
+      ChatTableView.ChatCell.self
     }
   }
 

@@ -1,5 +1,5 @@
 //
-//  TextEditView.swift
+//  PlainTextEditView.swift
 //  Intelligents
 //
 //  Created by 秋星桥 on 2024/11/18.

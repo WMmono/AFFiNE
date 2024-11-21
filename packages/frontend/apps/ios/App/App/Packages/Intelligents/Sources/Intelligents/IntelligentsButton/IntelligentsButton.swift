@@ -11,6 +11,11 @@ import UIKit
 public class IntelligentsButton: UIView {
   let image = UIImageView()
   let background = UIView()
+  let activityIndicator = UIActivityIndicatorView()
+
+  public weak var delegate: (any IntelligentsButtonDelegate)? = nil {
+    didSet { assert(Thread.isMainThread) }
+  }
 
   public init() {
     super.init(frame: .zero)
@@ -38,9 +43,11 @@ public class IntelligentsButton: UIView {
       image.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -imageInsetValue),
     ].forEach { $0.isActive = true }
 
-//        layer.shadowColor = UIColor.black.withAlphaComponent(0.1).cgColor
-//        layer.shadowOffset = CGSize(width: 0, height: 0)
-//        layer.shadowRadius = 8
+    addSubview(activityIndicator)
+    [
+      activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
+      activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
+    ].forEach { $0.isActive = true }
 
     clipsToBounds = true
     layer.borderWidth = 2
@@ -49,6 +56,8 @@ public class IntelligentsButton: UIView {
     let tap = UITapGestureRecognizer(target: self, action: #selector(tapped))
     addGestureRecognizer(tap)
     isUserInteractionEnabled = true
+
+    stopProgress()
   }
 
   @available(*, unavailable)
@@ -56,18 +65,26 @@ public class IntelligentsButton: UIView {
     fatalError()
   }
 
+  deinit {
+    delegate = nil
+  }
+
   override public func layoutSubviews() {
     super.layoutSubviews()
-
     layer.cornerRadius = bounds.width / 2
   }
 
   @objc func tapped() {
-    guard let controller = parentViewController else {
-      assertionFailure()
-      return
-    }
-    let targetController = IntelligentsChatController()
-    controller.presentIntoCurrentContext(withTargetController: targetController)
+    delegate?.onIntelligentsButtonTapped(self)
+  }
+
+  public func beginProgress() {
+    activityIndicator.startAnimating()
+    activityIndicator.isHidden = false
+  }
+
+  public func stopProgress() {
+    activityIndicator.stopAnimating()
+    activityIndicator.isHidden = true
   }
 }

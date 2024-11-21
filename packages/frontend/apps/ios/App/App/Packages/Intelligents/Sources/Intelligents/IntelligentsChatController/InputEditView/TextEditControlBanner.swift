@@ -45,12 +45,12 @@ class TextEditControlBanner: UIStackView {
       $0.translatesAutoresizingMaskIntoConstraints = false
       addArrangedSubview($0)
     }
-    
+
     cameraButton.setImage(.init(systemName: "camera"), for: .normal)
     cameraButton.tintColor = .label
     photoButton.setImage(.init(systemName: "photo"), for: .normal)
     photoButton.tintColor = .label
-    
+
     sendButton.setImage(.init(systemName: "paperplane.fill"), for: .normal)
     sendButton.tintColor = .label
   }

@@ -7,12 +7,16 @@
 
 import UIKit
 
-class IntelligentsChatController: UIViewController {
+public class IntelligentsChatController: UIViewController {
   let header = Header()
+  let inputBoxKeyboardAdapter = UIView()
   let inputBox = InputBox()
+  let progressView = UIActivityIndicatorView()
   let tableView = ChatTableView()
 
-  override var title: String? {
+  var inputBoxKeyboardAdapterHeightConstraint = NSLayoutConstraint()
+
+  override public var title: String? {
     set {
       super.title = newValue
       header.titleLabel.text = newValue
@@ -22,9 +26,22 @@ class IntelligentsChatController: UIViewController {
     }
   }
 
-  init() {
+  public init() {
     super.init(nibName: nil, bundle: nil)
     title = "Chat with AI".localized()
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(keyboardWillDisappear),
+      name: UIResponder.keyboardWillHideNotification,
+      object: nil
+    )
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(keyboardWillAppear),
+      name: UIResponder.keyboardWillShowNotification,
+      object: nil
+    )
   }
 
   @available(*, unavailable)
@@ -32,7 +49,11 @@ class IntelligentsChatController: UIViewController {
     fatalError()
   }
 
-  override func viewDidLoad() {
+  deinit {
+    NotificationCenter.default.removeObserver(self)
+  }
+
+  override public func viewDidLoad() {
     super.viewDidLoad()
     assert(navigationController != nil)
     view.backgroundColor = .secondarySystemBackground
@@ -51,12 +72,23 @@ class IntelligentsChatController: UIViewController {
       header.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 44),
     ].forEach { $0.isActive = true }
 
+    view.addSubview(inputBoxKeyboardAdapter)
+    inputBoxKeyboardAdapter.translatesAutoresizingMaskIntoConstraints = false
+    [
+      inputBoxKeyboardAdapter.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      inputBoxKeyboardAdapter.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      inputBoxKeyboardAdapter.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+    ].forEach { $0.isActive = true }
+    inputBoxKeyboardAdapterHeightConstraint = inputBoxKeyboardAdapter.heightAnchor.constraint(equalToConstant: 0)
+    inputBoxKeyboardAdapterHeightConstraint.isActive = true
+    inputBoxKeyboardAdapter.backgroundColor = inputBox.backgroundView.backgroundColor
+
     view.addSubview(inputBox)
     inputBox.translatesAutoresizingMaskIntoConstraints = false
     [
       inputBox.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       inputBox.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      inputBox.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+      inputBox.bottomAnchor.constraint(equalTo: inputBoxKeyboardAdapter.topAnchor),
     ].forEach { $0.isActive = true }
 
     view.addSubview(tableView)
@@ -67,5 +99,53 @@ class IntelligentsChatController: UIViewController {
       tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       tableView.bottomAnchor.constraint(equalTo: inputBox.topAnchor),
     ].forEach { $0.isActive = true }
+
+    view.addSubview(progressView)
+    progressView.hidesWhenStopped = true
+    progressView.stopAnimating()
+    progressView.translatesAutoresizingMaskIntoConstraints = false
+    [
+      progressView.centerXAnchor.constraint(equalTo: inputBox.centerXAnchor),
+      progressView.centerYAnchor.constraint(equalTo: inputBox.centerYAnchor),
+    ].forEach { $0.isActive = true }
+    progressView.style = .large
+
+    inputBox.editor.controlBanner.sendButton.addTarget(
+      self,
+      action: #selector(send),
+      for: .touchUpInside
+    )
+  }
+
+  @objc func send() {
+    assert(Thread.isMainThread)
+    inputBox.isUserInteractionEnabled = false
+    progressView.startAnimating()
+    progressView.isHidden = false
+    progressView.alpha = 0
+    UIView.animate(withDuration: 0.3) {
+      self.inputBox.editor.alpha = 0
+      self.progressView.alpha = 1
+    } completion: { _ in
+      let viewModel = self.inputBox.editor.viewModel.duplicate()
+      self.inputBox.editor.viewModel.reset()
+      DispatchQueue.global().async {
+        self.sendSyncEx(viewModel: viewModel)
+        DispatchQueue.main.async {
+          UIView.animate(withDuration: 0.3) {
+            self.inputBox.editor.alpha = 1
+            self.progressView.alpha = 0
+          } completion: { _ in
+            self.inputBox.isUserInteractionEnabled = true
+            self.progressView.stopAnimating()
+          }
+        }
+      }
+    }
+  }
+
+  private func sendSyncEx(viewModel: InputEditView.ViewModel) {
+    let text = viewModel.text
+    let images = viewModel.attachments
   }
 }

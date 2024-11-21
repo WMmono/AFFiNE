@@ -20,7 +20,6 @@ extension IntelligentsChatController {
       editor.textEditor.font = UIFont.systemFont(ofSize: UIFont.labelFontSize)
       editor.placeholderText = "Summarize this article for me...".localized()
 
-
       backgroundView.backgroundColor = .systemBackground
       backgroundView.layer.cornerRadius = 16
       backgroundView.layer.shadowColor = UIColor.black.withAlphaComponent(0.25).cgColor
@@ -39,10 +38,10 @@ private extension IntelligentsChatController.InputBox {
   func setupLayout() {
     addSubview(backgroundView)
     backgroundView.translatesAutoresizingMaskIntoConstraints = false
-    
+
     addSubview(editor)
     editor.translatesAutoresizingMaskIntoConstraints = false
-    
+
     let inset: CGFloat = 16
 
     [

@@ -39,6 +39,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>We will take photo with this permission when you asked to do, and we will attach picture to your post or request when possible.</string>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIImageName</key>

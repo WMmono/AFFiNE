@@ -11,10 +11,11 @@ private let attachmentSize: CGFloat = 100
 private let attachmentSpacing: CGFloat = 16
 
 class AttachmentBannerView: UIScrollView {
-  var attachments: [UIImage] = [] {
-    didSet {
-      rebuildViews()
-    }
+  var readAttachments: (() -> ([UIImage]))?
+  var onAttachmentsDelete: ((Int) -> Void)?
+  var attachments: [UIImage] {
+    get { readAttachments?() ?? [] }
+    set { assertionFailure() }
   }
 
   override var intrinsicContentSize: CGSize {
@@ -25,7 +26,9 @@ class AttachmentBannerView: UIScrollView {
       height: attachmentSize
     )
   }
-  
+
+  let stackView = UIStackView()
+
   init() {
     super.init(frame: .zero)
 
@@ -33,7 +36,20 @@ class AttachmentBannerView: UIScrollView {
 
     showsHorizontalScrollIndicator = false
     showsVerticalScrollIndicator = false
-    
+
+    stackView.axis = .horizontal
+    stackView.spacing = attachmentSpacing
+    stackView.alignment = .center
+    stackView.distribution = .fill
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    addSubview(stackView)
+    [
+      stackView.topAnchor.constraint(equalTo: topAnchor),
+      stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+      stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+      stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+    ].forEach { $0.isActive = true }
+
     rebuildViews()
   }
 
@@ -41,24 +57,48 @@ class AttachmentBannerView: UIScrollView {
   required init?(coder _: NSCoder) {
     fatalError()
   }
-  
+
+  var reusableViews = [AttachmentPreviewView]()
+
   func rebuildViews() {
-    subviews.forEach { $0.removeFromSuperview() }
-    for (index, attachment) in attachments.enumerated() {
-      let view = AttachmentPreviewView()
-      view.imageView.image = attachment
-      addSubview(view)
-      view.translatesAutoresizingMaskIntoConstraints = false
-      view.frame = .init(
-        origin: .init(
-          x: (attachmentSize + attachmentSpacing) * CGFloat(index),
-          y: 0
-        ),
-        size: .init(width: attachmentSize, height: attachmentSize)
-      )
+    let attachments = attachments
+
+    if reusableViews.count > attachments.count {
+      for index in attachments.count ..< reusableViews.count {
+        reusableViews[index].removeFromSuperview()
+      }
+      reusableViews.removeLast(reusableViews.count - attachments.count)
     }
+    if reusableViews.count < attachments.count {
+      for _ in reusableViews.count ..< attachments.count {
+        let view = AttachmentPreviewView()
+        view.alpha = 0
+        reusableViews.append(view)
+      }
+    }
+
+    assert(reusableViews.count == attachments.count)
+
+    for (index, attachment) in attachments.enumerated() {
+      let view = reusableViews[index]
+      view.imageView.image = attachment
+      stackView.addArrangedSubview(view)
+      view.deleteButtonAction = { [weak self] in
+        self?.onAttachmentsDelete?(index)
+      }
+    }
+
     invalidateIntrinsicContentSize()
     contentSize = intrinsicContentSize
+    UIView.performWithoutAnimation {
+      self.layoutIfNeeded()
+    }
+
+    UIView.animate(withDuration: 0.3) {
+      for view in self.reusableViews {
+        view.alpha = 1
+      }
+    }
   }
 }
 
@@ -66,6 +106,8 @@ extension AttachmentBannerView {
   class AttachmentPreviewView: UIView {
     let imageView = UIImageView()
     let deleteButton = UIButton()
+
+    var deleteButtonAction: (() -> Void)?
 
     override var intrinsicContentSize: CGSize {
       .init(width: attachmentSize, height: attachmentSize)
@@ -100,6 +142,8 @@ extension AttachmentBannerView {
         deleteButton.heightAnchor.constraint(equalToConstant: 32),
       ].forEach { $0.isActive = true }
 
+      deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
+
       [
         widthAnchor.constraint(equalToConstant: attachmentSize),
         heightAnchor.constraint(equalToConstant: attachmentSize),
@@ -109,6 +153,11 @@ extension AttachmentBannerView {
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
       fatalError()
+    }
+
+    @objc func deleteButtonTapped() {
+      deleteButtonAction?()
+      deleteButtonAction = nil
     }
   }
 }

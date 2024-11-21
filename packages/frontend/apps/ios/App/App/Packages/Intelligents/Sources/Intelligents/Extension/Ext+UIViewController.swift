@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension UIViewController {
+public extension UIViewController {
   func presentIntoCurrentContext(withTargetController targetController: UIViewController, animated: Bool = true) {
     if let nav = self as? UINavigationController {
       nav.pushViewController(targetController, animated: animated)

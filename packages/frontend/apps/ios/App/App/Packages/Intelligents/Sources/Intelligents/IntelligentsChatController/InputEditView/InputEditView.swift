@@ -5,8 +5,8 @@
 //  Created by 秋星桥 on 2024/11/18.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 class InputEditView: UIView, UITextViewDelegate {
   let mainStack = UIStackView()
@@ -14,14 +14,14 @@ class InputEditView: UIView, UITextViewDelegate {
   let textEditor = PlainTextEditView()
   let placeholderLabel = UILabel()
   let controlBanner = TextEditControlBanner()
-  
+
   let viewModel = ViewModel()
   var placeholderText: String = "" {
     didSet {
       placeholderLabel.text = placeholderText
     }
   }
-  
+
   init() {
     super.init(frame: .zero)
 
@@ -51,7 +51,26 @@ class InputEditView: UIView, UITextViewDelegate {
         $0.trailingAnchor.constraint(equalTo: mainStack.trailingAnchor),
       ].forEach { $0.isActive = true }
     }
-    
+
+    attachmentsEditor.readAttachments = { [weak self] in
+      self?.viewModel.attachments ?? []
+    }
+    attachmentsEditor.onAttachmentsDelete = { [weak self] index in
+      self?.viewModel.attachments.remove(at: index)
+    }
+
+    controlBanner.cameraButton.addTarget(
+      self,
+      action: #selector(takePhoto),
+      for: .touchUpInside
+    )
+    controlBanner.photoButton.addTarget(
+      self,
+      action: #selector(selectPhoto),
+      for: .touchUpInside
+    )
+
+    textEditor.returnKeyType = .send
     textEditor.addSubview(placeholderLabel)
     placeholderLabel.textColor = .label.withAlphaComponent(0.25)
     placeholderLabel.font = textEditor.font
@@ -61,7 +80,7 @@ class InputEditView: UIView, UITextViewDelegate {
       placeholderLabel.trailingAnchor.constraint(equalTo: textEditor.trailingAnchor, constant: -2),
       placeholderLabel.topAnchor.constraint(equalTo: textEditor.topAnchor, constant: 0),
     ].forEach { $0.isActive = true }
-    
+
     viewModel.objectWillChange
       .receive(on: DispatchQueue.main)
       .sink { [weak self] _ in
@@ -76,26 +95,26 @@ class InputEditView: UIView, UITextViewDelegate {
   required init?(coder _: NSCoder) {
     fatalError()
   }
-  
+
   func textViewDidChange(_ textView: UITextView) {
     viewModel.text = textView.text
   }
-  
-  func textViewDidBeginEditing(_ textView: UITextView) {
+
+  func textViewDidBeginEditing(_: UITextView) {
     updatePlaceholderVisibility()
   }
-  
-  func textViewDidEndEditing(_ textView: UITextView) {
+
+  func textViewDidEndEditing(_: UITextView) {
     updatePlaceholderVisibility()
   }
-  
+
   func updatePlaceholderVisibility() {
     let visible = viewModel.text.isEmpty && !textEditor.isFirstResponder
     UIView.animate(withDuration: 0.25) {
       self.placeholderLabel.alpha = visible ? 1 : 0
     }
   }
-  
+
   func updateValues() {
     UIView.animate(
       withDuration: 0.5,
@@ -106,10 +125,8 @@ class InputEditView: UIView, UITextViewDelegate {
       if textEditor.text != viewModel.text {
         textEditor.text = viewModel.text
       }
-      if attachmentsEditor.attachments != viewModel.attachments {
-        attachmentsEditor.attachments = viewModel.attachments
-      }
-      self.parentViewController?.view.layoutIfNeeded()
+      attachmentsEditor.rebuildViews()
+      parentViewController?.view.layoutIfNeeded()
     }
   }
 }

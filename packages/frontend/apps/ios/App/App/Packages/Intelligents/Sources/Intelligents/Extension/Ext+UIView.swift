@@ -18,20 +18,29 @@ extension UIView {
     }
     return nil
   }
-  
-#if DEBUG
-  func debugFrame() {
-    layer.borderWidth = 1
-    layer.borderColor = [
-      UIColor.red,
-      .green,
-      .blue,
-      .yellow,
-      .cyan,
-      .magenta,
-      .orange,
-    ].map(\.cgColor).randomElement()
-    subviews.forEach { $0.debugFrame() }
+
+  func removeEveryAutoResizingMasks() {
+    var views: [UIView] = [self]
+    while let view = views.first {
+      views.removeFirst()
+      view.translatesAutoresizingMaskIntoConstraints = false
+      view.subviews.forEach { views.append($0) }
+    }
   }
-#endif
+
+  #if DEBUG
+    func debugFrame() {
+      layer.borderWidth = 1
+      layer.borderColor = [
+        UIColor.red,
+        .green,
+        .blue,
+        .yellow,
+        .cyan,
+        .magenta,
+        .orange,
+      ].map(\.cgColor).randomElement()
+      subviews.forEach { $0.debugFrame() }
+    }
+  #endif
 }
