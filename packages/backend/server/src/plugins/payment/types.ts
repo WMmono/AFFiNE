@@ -16,6 +16,7 @@ export enum SubscriptionPlan {
   Team = 'team',
   Enterprise = 'enterprise',
   SelfHosted = 'selfhosted',
+  SelfHostedTeam = 'selfhostedteam',
 }
 
 export enum SubscriptionVariant {
@@ -95,7 +96,9 @@ export interface KnownStripeInvoice {
   /**
    * User in AFFiNE system.
    */
-  userId: string;
+  userId?: string;
+
+  userEmail: string;
 
   /**
    * The lookup key of the price that the invoice is for.
@@ -117,7 +120,9 @@ export interface KnownStripeSubscription {
   /**
    * User in AFFiNE system.
    */
-  userId: string;
+  userId?: string;
+
+  userEmail: string;
 
   /**
    * The lookup key of the price that the invoice is for.
@@ -212,6 +217,16 @@ export const DEFAULT_PRICES = new Map([
   [
     `${SubscriptionPlan.Team}_${SubscriptionRecurring.Yearly}`,
     { product: 'AFFiNE Team(per seat)', price: 14400 },
+  ],
+
+  // selfhost team
+  [
+    `${SubscriptionPlan.SelfHostedTeam}_${SubscriptionRecurring.Monthly}`,
+    { product: 'AFFiNE Self-hosted Team(per seat)', price: 1500 },
+  ],
+  [
+    `${SubscriptionPlan.SelfHostedTeam}_${SubscriptionRecurring.Yearly}`,
+    { product: 'AFFiNE Self-hosted Team(per seat)', price: 14400 },
   ],
 ]);
 
