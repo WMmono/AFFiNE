@@ -1,11 +1,11 @@
 import { LinkIcon } from '@blocksuite/icons/rc';
-import type { WorkspaceService } from '@toeverything/infra';
 import { Entity, LiveData } from '@toeverything/infra';
 
 import { resolveLinkToDoc } from '../../navigation';
 import { isLink } from '../../navigation/utils';
 import type { QuickSearchSession } from '../providers/quick-search-provider';
 import type { QuickSearchItem } from '../types/item';
+import type { WorkspaceService } from '../../workspace';
 
 type ExternalLinkPayload = {
   url: string;

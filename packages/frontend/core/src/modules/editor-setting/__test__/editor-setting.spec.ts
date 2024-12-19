@@ -1,10 +1,11 @@
-import { Framework, GlobalState, MemoryMemento } from '@toeverything/infra';
+import { Framework, MemoryMemento } from '@toeverything/infra';
 import { expect, test } from 'vitest';
 
 import { EditorSetting } from '../entities/editor-setting';
 import { GlobalStateEditorSettingProvider } from '../impls/global-state';
 import { EditorSettingProvider } from '../provider/editor-setting-provider';
 import { EditorSettingService } from '../services/editor-setting';
+import { GlobalState } from '../../storage';
 
 test('editor setting service', () => {
   const framework = new Framework();

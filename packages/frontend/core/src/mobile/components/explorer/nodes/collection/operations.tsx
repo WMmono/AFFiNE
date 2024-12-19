@@ -21,15 +21,12 @@ import {
   PlusIcon,
   SplitViewIcon,
 } from '@blocksuite/icons/rc';
-import {
-  FeatureFlagService,
-  useLiveData,
-  useServices,
-  WorkspaceService,
-} from '@toeverything/infra';
+import { useLiveData, useServices } from '@toeverything/infra';
 import { useCallback, useMemo } from 'react';
 
 import { CollectionRenameSubMenu } from './dialog';
+import { WorkspaceService } from '@affine/core/modules/workspace';
+import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 
 export const useExplorerCollectionNodeOperations = (
   collectionId: string,

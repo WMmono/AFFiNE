@@ -1,8 +1,8 @@
-import type { WorkspaceService, WorkspacesService } from '@toeverything/infra';
 import { Service } from '@toeverything/infra';
 
 import { WorkspacePermission } from '../entities/permission';
 import type { WorkspacePermissionStore } from '../stores/permission';
+import type { WorkspaceService, WorkspacesService } from '../../workspace';
 
 export class WorkspacePermissionService extends Service {
   permission = this.framework.createEntity(WorkspacePermission);

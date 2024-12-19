@@ -1,6 +1,5 @@
 import { DebugLogger } from '@affine/debug';
 import type { WorkspaceQuotaQuery } from '@affine/graphql';
-import type { WorkspaceService } from '@toeverything/infra';
 import {
   backoffRetry,
   catchErrorInto,
@@ -18,6 +17,7 @@ import { EMPTY, map, mergeMap } from 'rxjs';
 
 import { isBackendError, isNetworkError } from '../../cloud';
 import type { WorkspaceQuotaStore } from '../stores/quota';
+import type { WorkspaceService } from '../../workspace';
 
 type QuotaType = WorkspaceQuotaQuery['workspace']['quota'];
 

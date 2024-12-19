@@ -20,18 +20,14 @@ import {
   PlusIcon,
   SplitViewIcon,
 } from '@blocksuite/icons/rc';
-import {
-  DocsService,
-  FeatureFlagService,
-  GlobalCacheService,
-  useLiveData,
-  useService,
-  useServices,
-  WorkspaceService,
-} from '@toeverything/infra';
+import { useLiveData, useService, useServices } from '@toeverything/infra';
 import { useCallback, useMemo } from 'react';
 
 import { TagRenameSubMenu } from './dialog';
+import { WorkspaceService } from '@affine/core/modules/workspace';
+import { DocsService } from '@affine/core/modules/doc';
+import { GlobalCacheService } from '@affine/core/modules/storage';
+import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 
 export const useExplorerTagNodeOperations = (
   tagId: string,

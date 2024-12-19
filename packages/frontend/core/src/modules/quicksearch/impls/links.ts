@@ -1,6 +1,5 @@
 import type { ReferenceParams } from '@blocksuite/affine/blocks';
 import { BlockLinkIcon, EdgelessIcon, PageIcon } from '@blocksuite/icons/rc';
-import type { DocsService, WorkspaceService } from '@toeverything/infra';
 import { Entity, LiveData } from '@toeverything/infra';
 import { omit, truncate } from 'lodash-es';
 
@@ -9,6 +8,8 @@ import { resolveLinkToDoc } from '../../navigation';
 import { isLink } from '../../navigation/utils';
 import type { QuickSearchSession } from '../providers/quick-search-provider';
 import type { QuickSearchItem } from '../types/item';
+import type { DocsService } from '../../doc';
+import type { WorkspaceService } from '../../workspace';
 
 type LinkPayload = { docId: string } & ReferenceParams;
 

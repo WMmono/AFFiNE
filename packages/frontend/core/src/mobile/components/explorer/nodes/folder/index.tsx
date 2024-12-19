@@ -29,12 +29,7 @@ import {
   RemoveFolderIcon,
   TagsIcon,
 } from '@blocksuite/icons/rc';
-import {
-  FeatureFlagService,
-  useLiveData,
-  useServices,
-  WorkspaceService,
-} from '@toeverything/infra';
+import { useLiveData, useServices } from '@toeverything/infra';
 import { difference } from 'lodash-es';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -45,6 +40,8 @@ import { ExplorerDocNode } from '../doc';
 import { ExplorerTagNode } from '../tag';
 import { FolderCreateTip, FolderRenameSubMenu } from './dialog';
 import { FavoriteFolderOperation } from './operations';
+import { WorkspaceService } from '@affine/core/modules/workspace';
+import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 
 export const ExplorerFolderNode = ({
   nodeId,

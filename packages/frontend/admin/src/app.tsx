@@ -3,18 +3,18 @@ import {
   configureCloudModule,
   DefaultServerService,
 } from '@affine/core/modules/cloud';
-import { configureLocalStorageStateStorageImpls } from '@affine/core/modules/storage';
+import { configureGlobalContextModule } from '@affine/core/modules/global-context';
+import {
+  configureLifecycleModule,
+  LifecycleService,
+} from '@affine/core/modules/lifecycle';
+import {
+  configureGlobalStorageModule,
+  configureLocalStorageStateStorageImpls,
+} from '@affine/core/modules/storage';
 import { configureUrlModule } from '@affine/core/modules/url';
 import { wrapCreateBrowserRouter } from '@sentry/react';
-import {
-  configureGlobalContextModule,
-  configureGlobalStorageModule,
-  configureLifecycleModule,
-  Framework,
-  FrameworkRoot,
-  FrameworkScope,
-  LifecycleService,
-} from '@toeverything/infra';
+import { Framework, FrameworkRoot, FrameworkScope } from '@toeverything/infra';
 import { useEffect } from 'react';
 import {
   createBrowserRouter as reactRouterCreateBrowserRouter,

@@ -1,9 +1,10 @@
-import type { GlobalState, WorkspacesService } from '@toeverything/infra';
 import { LiveData, OnEvent, Service } from '@toeverything/infra';
 
 import { resolveLinkToDoc } from '../../navigation';
 import { WorkbenchLocationChanged } from '../../workbench/services/workbench';
 import { getLocalWorkspaceIds } from '../../workspace-engine/impls/local';
+import type { GlobalState } from '../../storage';
+import type { WorkspacesService } from '../../workspace';
 
 const storageKey = 'open-link-mode';
 

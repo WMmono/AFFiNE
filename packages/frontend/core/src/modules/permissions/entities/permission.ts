@@ -3,7 +3,6 @@ import type {
   Permission,
   WorkspaceInviteLinkExpireTime,
 } from '@affine/graphql';
-import type { WorkspaceService } from '@toeverything/infra';
 import {
   backoffRetry,
   catchErrorInto,
@@ -18,6 +17,7 @@ import { EMPTY, exhaustMap, mergeMap } from 'rxjs';
 
 import { isBackendError, isNetworkError } from '../../cloud';
 import type { WorkspacePermissionStore } from '../stores/permission';
+import type { WorkspaceService } from '../../workspace';
 
 const logger = new DebugLogger('affine:workspace-permission');
 

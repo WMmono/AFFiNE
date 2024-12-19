@@ -1,11 +1,9 @@
-import {
-  type Framework,
-  GlobalCache,
-  WorkspaceScope,
-} from '@toeverything/infra';
+import { type Framework } from '@toeverything/infra';
 
 import { ExplorerSection } from './entities/explore-section';
 import { ExplorerService } from './services/explorer';
+import { GlobalCache } from '../storage';
+import { WorkspaceScope } from '../workspace';
 export { ExplorerService } from './services/explorer';
 export type { CollapsibleSectionName } from './types';
 export { CollapsibleSection } from './views/layouts/collapsible-section';
