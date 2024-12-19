@@ -1,4 +1,4 @@
- 
+/* eslint-disable */
 // AUTO GENERATED FILE
 import { createUnionType, Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
