@@ -12,8 +12,13 @@ name = "uniffi-bindgen"
 path = "uniffi-bindgen.rs"
 
 [dependencies]
-affine_common = { workspace = true }
-uniffi = { version = "0.28", features = ["cli"] }
+anyhow         = { workspace = true }
+affine_common  = { workspace = true }
+affine_nbstore = { workspace = true, features = ["noop"] }
+chrono         = { workspace = true }
+uniffi         = { workspace = true, features = ["cli"] }
+thiserror      = { workspace = true }
+sqlx           = { workspace = true }
 
 [build-dependencies]
-uniffi = { version = "0.28", features = ["build"] }
+uniffi = { workspace = true, features = ["build"] }

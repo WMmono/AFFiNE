@@ -13,5 +13,6 @@ class AFFiNEViewController: CAPBridgeViewController {
     bridge?.registerPluginInstance(CookiePlugin())
     bridge?.registerPluginInstance(HashcashPlugin())
     bridge?.registerPluginInstance(NavigationGesturePlugin())
+    bridge?.registerPluginInstance(NbStorePlugin())
   }
 }

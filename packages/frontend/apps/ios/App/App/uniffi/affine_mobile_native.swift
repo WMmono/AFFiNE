@@ -415,6 +415,30 @@ fileprivate struct FfiConverterUInt32: FfiConverterPrimitive {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterBool : FfiConverter {
+    typealias FfiType = Int8
+    typealias SwiftType = Bool
+
+    public static func lift(_ value: Int8) throws -> Bool {
+        return value != 0
+    }
+
+    public static func lower(_ value: Bool) -> Int8 {
+        return value ? 1 : 0
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Bool {
+        return try lift(readInt(&buf))
+    }
+
+    public static func write(_ value: Bool, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterString: FfiConverter {
     typealias SwiftType = String
     typealias FfiType = RustBuffer
@@ -452,6 +476,917 @@ fileprivate struct FfiConverterString: FfiConverter {
         writeBytes(&buf, value.utf8)
     }
 }
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterData: FfiConverterRustBuffer {
+    typealias SwiftType = Data
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Data {
+        let len: Int32 = try readInt(&buf)
+        return Data(try readBytes(&buf, count: Int(len)))
+    }
+
+    public static func write(_ value: Data, into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        writeBytes(&buf, value)
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterTimestamp: FfiConverterRustBuffer {
+    typealias SwiftType = Date
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Date {
+        let seconds: Int64 = try readInt(&buf)
+        let nanoseconds: UInt32 = try readInt(&buf)
+        if seconds >= 0 {
+            let delta = Double(seconds) + (Double(nanoseconds) / 1.0e9)
+            return Date.init(timeIntervalSince1970: delta)
+        } else {
+            let delta = Double(seconds) - (Double(nanoseconds) / 1.0e9)
+            return Date.init(timeIntervalSince1970: delta)
+        }
+    }
+
+    public static func write(_ value: Date, into buf: inout [UInt8]) {
+        var delta = value.timeIntervalSince1970
+        var sign: Int64 = 1
+        if delta < 0 {
+            // The nanoseconds portion of the epoch offset must always be
+            // positive, to simplify the calculation we will use the absolute
+            // value of the offset.
+            sign = -1
+            delta = -delta
+        }
+        if delta.rounded(.down) > Double(Int64.max) {
+            fatalError("Timestamp overflow, exceeds max bounds supported by Uniffi")
+        }
+        let seconds = Int64(delta)
+        let nanoseconds = UInt32((delta - Double(seconds)) * 1.0e9)
+        writeInt(&buf, sign * seconds)
+        writeInt(&buf, nanoseconds)
+    }
+}
+
+
+
+
+public protocol DocStorageProtocol : AnyObject {
+    
+    func checkpoint() async throws 
+    
+    func close() async throws 
+    
+    /**
+     * Initialize the database and run migrations.
+     */
+    func connect() async throws 
+    
+    func deleteDoc(docId: String) async throws 
+    
+    func getDocClock(docId: String) async throws  -> DocClock?
+    
+    func getDocClocks(after: Date?) async throws  -> [DocClock]
+    
+    func getDocSnapshot(docId: String) async throws  -> DocRecord?
+    
+    func getDocUpdates(docId: String) async throws  -> [DocUpdate]
+    
+    func isClosed()  -> Bool
+    
+    func markUpdatesMerged(docId: String, updates: [Date]) async throws  -> UInt32
+    
+    func pushUpdate(docId: String, update: Data) async throws  -> Date
+    
+    func setDocSnapshot(snapshot: DocRecord) async throws  -> Bool
+    
+    func setSpaceId(spaceId: String) async throws 
+    
+    func validate() async throws  -> Bool
+    
+}
+
+open class DocStorage:
+    DocStorageProtocol {
+    fileprivate let pointer: UnsafeMutableRawPointer!
+
+    /// Used to instantiate a [FFIObject] without an actual pointer, for fakes in tests, mostly.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public struct NoPointer {
+        public init() {}
+    }
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+    required public init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        self.pointer = pointer
+    }
+
+    // This constructor can be used to instantiate a fake object.
+    // - Parameter noPointer: Placeholder value so we can have a constructor separate from the default empty one that may be implemented for classes extending [FFIObject].
+    //
+    // - Warning:
+    //     Any object instantiated with this constructor cannot be passed to an actual Rust-backed object. Since there isn't a backing [Pointer] the FFI lower functions will crash.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public init(noPointer: NoPointer) {
+        self.pointer = nil
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public func uniffiClonePointer() -> UnsafeMutableRawPointer {
+        return try! rustCall { uniffi_affine_mobile_native_fn_clone_docstorage(self.pointer, $0) }
+    }
+public convenience init(path: String)throws  {
+    let pointer =
+        try rustCallWithError(FfiConverterTypeUniffiError.lift) {
+    uniffi_affine_mobile_native_fn_constructor_docstorage_new(
+        FfiConverterString.lower(path),$0
+    )
+}
+    self.init(unsafeFromRawPointer: pointer)
+}
+
+    deinit {
+        guard let pointer = pointer else {
+            return
+        }
+
+        try! rustCall { uniffi_affine_mobile_native_fn_free_docstorage(pointer, $0) }
+    }
+
+    
+
+    
+open func checkpoint()async throws  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_checkpoint(
+                    self.uniffiClonePointer()
+                    
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_void,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_void,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_void,
+            liftFunc: { $0 },
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func close()async throws  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_close(
+                    self.uniffiClonePointer()
+                    
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_void,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_void,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_void,
+            liftFunc: { $0 },
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+    /**
+     * Initialize the database and run migrations.
+     */
+open func connect()async throws  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_connect(
+                    self.uniffiClonePointer()
+                    
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_void,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_void,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_void,
+            liftFunc: { $0 },
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func deleteDoc(docId: String)async throws  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_delete_doc(
+                    self.uniffiClonePointer(),
+                    FfiConverterString.lower(docId)
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_void,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_void,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_void,
+            liftFunc: { $0 },
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func getDocClock(docId: String)async throws  -> DocClock? {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_get_doc_clock(
+                    self.uniffiClonePointer(),
+                    FfiConverterString.lower(docId)
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_rust_buffer,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_rust_buffer,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_rust_buffer,
+            liftFunc: FfiConverterOptionTypeDocClock.lift,
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func getDocClocks(after: Date?)async throws  -> [DocClock] {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_get_doc_clocks(
+                    self.uniffiClonePointer(),
+                    FfiConverterOptionTimestamp.lower(after)
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_rust_buffer,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_rust_buffer,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_rust_buffer,
+            liftFunc: FfiConverterSequenceTypeDocClock.lift,
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func getDocSnapshot(docId: String)async throws  -> DocRecord? {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_get_doc_snapshot(
+                    self.uniffiClonePointer(),
+                    FfiConverterString.lower(docId)
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_rust_buffer,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_rust_buffer,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_rust_buffer,
+            liftFunc: FfiConverterOptionTypeDocRecord.lift,
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func getDocUpdates(docId: String)async throws  -> [DocUpdate] {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_get_doc_updates(
+                    self.uniffiClonePointer(),
+                    FfiConverterString.lower(docId)
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_rust_buffer,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_rust_buffer,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_rust_buffer,
+            liftFunc: FfiConverterSequenceTypeDocUpdate.lift,
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func isClosed() -> Bool {
+    return try!  FfiConverterBool.lift(try! rustCall() {
+    uniffi_affine_mobile_native_fn_method_docstorage_is_closed(self.uniffiClonePointer(),$0
+    )
+})
+}
+    
+open func markUpdatesMerged(docId: String, updates: [Date])async throws  -> UInt32 {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_mark_updates_merged(
+                    self.uniffiClonePointer(),
+                    FfiConverterString.lower(docId),FfiConverterSequenceTimestamp.lower(updates)
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_u32,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_u32,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_u32,
+            liftFunc: FfiConverterUInt32.lift,
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func pushUpdate(docId: String, update: Data)async throws  -> Date {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_push_update(
+                    self.uniffiClonePointer(),
+                    FfiConverterString.lower(docId),FfiConverterData.lower(update)
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_rust_buffer,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_rust_buffer,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_rust_buffer,
+            liftFunc: FfiConverterTimestamp.lift,
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func setDocSnapshot(snapshot: DocRecord)async throws  -> Bool {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_set_doc_snapshot(
+                    self.uniffiClonePointer(),
+                    FfiConverterTypeDocRecord.lower(snapshot)
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_i8,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_i8,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_i8,
+            liftFunc: FfiConverterBool.lift,
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func setSpaceId(spaceId: String)async throws  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_set_space_id(
+                    self.uniffiClonePointer(),
+                    FfiConverterString.lower(spaceId)
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_void,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_void,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_void,
+            liftFunc: { $0 },
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+open func validate()async throws  -> Bool {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_affine_mobile_native_fn_method_docstorage_validate(
+                    self.uniffiClonePointer()
+                    
+                )
+            },
+            pollFunc: ffi_affine_mobile_native_rust_future_poll_i8,
+            completeFunc: ffi_affine_mobile_native_rust_future_complete_i8,
+            freeFunc: ffi_affine_mobile_native_rust_future_free_i8,
+            liftFunc: FfiConverterBool.lift,
+            errorHandler: FfiConverterTypeUniffiError.lift
+        )
+}
+    
+
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeDocStorage: FfiConverter {
+
+    typealias FfiType = UnsafeMutableRawPointer
+    typealias SwiftType = DocStorage
+
+    public static func lift(_ pointer: UnsafeMutableRawPointer) throws -> DocStorage {
+        return DocStorage(unsafeFromRawPointer: pointer)
+    }
+
+    public static func lower(_ value: DocStorage) -> UnsafeMutableRawPointer {
+        return value.uniffiClonePointer()
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> DocStorage {
+        let v: UInt64 = try readInt(&buf)
+        // The Rust code won't compile if a pointer won't fit in a UInt64.
+        // We have to go via `UInt` because that's the thing that's the size of a pointer.
+        let ptr = UnsafeMutableRawPointer(bitPattern: UInt(truncatingIfNeeded: v))
+        if (ptr == nil) {
+            throw UniffiInternalError.unexpectedNullPointer
+        }
+        return try lift(ptr!)
+    }
+
+    public static func write(_ value: DocStorage, into buf: inout [UInt8]) {
+        // This fiddling is because `Int` is the thing that's the same size as a pointer.
+        // The Rust code won't compile if a pointer won't fit in a `UInt64`.
+        writeInt(&buf, UInt64(bitPattern: Int64(Int(bitPattern: lower(value)))))
+    }
+}
+
+
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeDocStorage_lift(_ pointer: UnsafeMutableRawPointer) throws -> DocStorage {
+    return try FfiConverterTypeDocStorage.lift(pointer)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeDocStorage_lower(_ value: DocStorage) -> UnsafeMutableRawPointer {
+    return FfiConverterTypeDocStorage.lower(value)
+}
+
+
+public struct DocClock {
+    public var docId: String
+    public var timestamp: Date
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(docId: String, timestamp: Date) {
+        self.docId = docId
+        self.timestamp = timestamp
+    }
+}
+
+
+
+extension DocClock: Equatable, Hashable {
+    public static func ==(lhs: DocClock, rhs: DocClock) -> Bool {
+        if lhs.docId != rhs.docId {
+            return false
+        }
+        if lhs.timestamp != rhs.timestamp {
+            return false
+        }
+        return true
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(docId)
+        hasher.combine(timestamp)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeDocClock: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> DocClock {
+        return
+            try DocClock(
+                docId: FfiConverterString.read(from: &buf), 
+                timestamp: FfiConverterTimestamp.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: DocClock, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.docId, into: &buf)
+        FfiConverterTimestamp.write(value.timestamp, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeDocClock_lift(_ buf: RustBuffer) throws -> DocClock {
+    return try FfiConverterTypeDocClock.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeDocClock_lower(_ value: DocClock) -> RustBuffer {
+    return FfiConverterTypeDocClock.lower(value)
+}
+
+
+public struct DocRecord {
+    public var docId: String
+    public var data: Data
+    public var timestamp: Date
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(docId: String, data: Data, timestamp: Date) {
+        self.docId = docId
+        self.data = data
+        self.timestamp = timestamp
+    }
+}
+
+
+
+extension DocRecord: Equatable, Hashable {
+    public static func ==(lhs: DocRecord, rhs: DocRecord) -> Bool {
+        if lhs.docId != rhs.docId {
+            return false
+        }
+        if lhs.data != rhs.data {
+            return false
+        }
+        if lhs.timestamp != rhs.timestamp {
+            return false
+        }
+        return true
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(docId)
+        hasher.combine(data)
+        hasher.combine(timestamp)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeDocRecord: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> DocRecord {
+        return
+            try DocRecord(
+                docId: FfiConverterString.read(from: &buf), 
+                data: FfiConverterData.read(from: &buf), 
+                timestamp: FfiConverterTimestamp.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: DocRecord, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.docId, into: &buf)
+        FfiConverterData.write(value.data, into: &buf)
+        FfiConverterTimestamp.write(value.timestamp, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeDocRecord_lift(_ buf: RustBuffer) throws -> DocRecord {
+    return try FfiConverterTypeDocRecord.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeDocRecord_lower(_ value: DocRecord) -> RustBuffer {
+    return FfiConverterTypeDocRecord.lower(value)
+}
+
+
+public struct DocUpdate {
+    public var docId: String
+    public var createdAt: Date
+    public var data: Data
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(docId: String, createdAt: Date, data: Data) {
+        self.docId = docId
+        self.createdAt = createdAt
+        self.data = data
+    }
+}
+
+
+
+extension DocUpdate: Equatable, Hashable {
+    public static func ==(lhs: DocUpdate, rhs: DocUpdate) -> Bool {
+        if lhs.docId != rhs.docId {
+            return false
+        }
+        if lhs.createdAt != rhs.createdAt {
+            return false
+        }
+        if lhs.data != rhs.data {
+            return false
+        }
+        return true
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(docId)
+        hasher.combine(createdAt)
+        hasher.combine(data)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeDocUpdate: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> DocUpdate {
+        return
+            try DocUpdate(
+                docId: FfiConverterString.read(from: &buf), 
+                createdAt: FfiConverterTimestamp.read(from: &buf), 
+                data: FfiConverterData.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: DocUpdate, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.docId, into: &buf)
+        FfiConverterTimestamp.write(value.createdAt, into: &buf)
+        FfiConverterData.write(value.data, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeDocUpdate_lift(_ buf: RustBuffer) throws -> DocUpdate {
+    return try FfiConverterTypeDocUpdate.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeDocUpdate_lower(_ value: DocUpdate) -> RustBuffer {
+    return FfiConverterTypeDocUpdate.lower(value)
+}
+
+
+public enum UniffiError {
+
+    
+    
+    case EmptyDocStoragePath
+    case EmptySpaceId
+    case SqlxError(String
+    )
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeUniffiError: FfiConverterRustBuffer {
+    typealias SwiftType = UniffiError
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UniffiError {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+
+        
+
+        
+        case 1: return .EmptyDocStoragePath
+        case 2: return .EmptySpaceId
+        case 3: return .SqlxError(
+            try FfiConverterString.read(from: &buf)
+            )
+
+         default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: UniffiError, into buf: inout [UInt8]) {
+        switch value {
+
+        
+
+        
+        
+        case .EmptyDocStoragePath:
+            writeInt(&buf, Int32(1))
+        
+        
+        case .EmptySpaceId:
+            writeInt(&buf, Int32(2))
+        
+        
+        case let .SqlxError(v1):
+            writeInt(&buf, Int32(3))
+            FfiConverterString.write(v1, into: &buf)
+            
+        }
+    }
+}
+
+
+extension UniffiError: Equatable, Hashable {}
+
+extension UniffiError: Foundation.LocalizedError {
+    public var errorDescription: String? {
+        String(reflecting: self)
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterOptionTimestamp: FfiConverterRustBuffer {
+    typealias SwiftType = Date?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterTimestamp.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterTimestamp.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterOptionTypeDocClock: FfiConverterRustBuffer {
+    typealias SwiftType = DocClock?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterTypeDocClock.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterTypeDocClock.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterOptionTypeDocRecord: FfiConverterRustBuffer {
+    typealias SwiftType = DocRecord?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterTypeDocRecord.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterTypeDocRecord.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterSequenceTimestamp: FfiConverterRustBuffer {
+    typealias SwiftType = [Date]
+
+    public static func write(_ value: [Date], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTimestamp.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [Date] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [Date]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTimestamp.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterSequenceTypeDocClock: FfiConverterRustBuffer {
+    typealias SwiftType = [DocClock]
+
+    public static func write(_ value: [DocClock], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeDocClock.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [DocClock] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [DocClock]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeDocClock.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterSequenceTypeDocUpdate: FfiConverterRustBuffer {
+    typealias SwiftType = [DocUpdate]
+
+    public static func write(_ value: [DocUpdate], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeDocUpdate.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [DocUpdate] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [DocUpdate]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeDocUpdate.read(from: &buf))
+        }
+        return seq
+    }
+}
+private let UNIFFI_RUST_FUTURE_POLL_READY: Int8 = 0
+private let UNIFFI_RUST_FUTURE_POLL_MAYBE_READY: Int8 = 1
+
+fileprivate let uniffiContinuationHandleMap = UniffiHandleMap<UnsafeContinuation<Int8, Never>>()
+
+fileprivate func uniffiRustCallAsync<F, T>(
+    rustFutureFunc: () -> UInt64,
+    pollFunc: (UInt64, @escaping UniffiRustFutureContinuationCallback, UInt64) -> (),
+    completeFunc: (UInt64, UnsafeMutablePointer<RustCallStatus>) -> F,
+    freeFunc: (UInt64) -> (),
+    liftFunc: (F) throws -> T,
+    errorHandler: ((RustBuffer) throws -> Swift.Error)?
+) async throws -> T {
+    // Make sure to call uniffiEnsureInitialized() since future creation doesn't have a
+    // RustCallStatus param, so doesn't use makeRustCall()
+    uniffiEnsureInitialized()
+    let rustFuture = rustFutureFunc()
+    defer {
+        freeFunc(rustFuture)
+    }
+    var pollResult: Int8;
+    repeat {
+        pollResult = await withUnsafeContinuation {
+            pollFunc(
+                rustFuture,
+                uniffiFutureContinuationCallback,
+                uniffiContinuationHandleMap.insert(obj: $0)
+            )
+        }
+    } while pollResult != UNIFFI_RUST_FUTURE_POLL_READY
+
+    return try liftFunc(makeRustCall(
+        { completeFunc(rustFuture, $0) },
+        errorHandler: errorHandler
+    ))
+}
+
+// Callback handlers for an async calls.  These are invoked by Rust when the future is ready.  They
+// lift the return value or error and resume the suspended function.
+fileprivate func uniffiFutureContinuationCallback(handle: UInt64, pollResult: Int8) {
+    if let continuation = try? uniffiContinuationHandleMap.remove(handle: handle) {
+        continuation.resume(returning: pollResult)
+    } else {
+        print("uniffiFutureContinuationCallback invalid handle")
+    }
+}
 public func hashcashMint(resource: String, bits: UInt32) -> String {
     return try!  FfiConverterString.lift(try! rustCall() {
     uniffi_affine_mobile_native_fn_func_hashcash_mint(
@@ -477,6 +1412,51 @@ private var initializationResult: InitializationResult = {
         return InitializationResult.contractVersionMismatch
     }
     if (uniffi_affine_mobile_native_checksum_func_hashcash_mint() != 23633) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_checkpoint() != 36613) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_close() != 10808) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_connect() != 15551) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_delete_doc() != 53248) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_get_doc_clock() != 29534) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_get_doc_clocks() != 44204) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_get_doc_snapshot() != 9624) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_get_doc_updates() != 57795) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_is_closed() != 25468) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_mark_updates_merged() != 56840) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_push_update() != 157) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_set_doc_snapshot() != 6431) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_set_space_id() != 22706) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_method_docstorage_validate() != 11413) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_affine_mobile_native_checksum_constructor_docstorage_new() != 48015) {
         return InitializationResult.apiChecksumMismatch
     }
 
