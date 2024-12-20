@@ -26,7 +26,7 @@ import { LiveData, Service } from '@toeverything/infra';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 
-import type { DocsService } from '../../doc';
+import type { DocRecord, DocsService } from '../../doc';
 import type { FeatureFlagService } from '../../feature-flag';
 import type { I18nService } from '../../i18n';
 import type { JournalService } from '../../journal';
