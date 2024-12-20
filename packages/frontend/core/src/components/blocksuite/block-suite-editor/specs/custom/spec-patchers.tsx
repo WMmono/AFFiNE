@@ -8,7 +8,11 @@ import {
   type useConfirmModal,
 } from '@affine/component';
 import { WorkspaceServerService } from '@affine/core/modules/cloud';
-import { DocService, DocsService } from '@affine/core/modules/doc';
+import {
+  type DocRecord,
+  DocService,
+  DocsService,
+} from '@affine/core/modules/doc';
 import type { EditorService } from '@affine/core/modules/editor';
 import { EditorSettingService } from '@affine/core/modules/editor-setting';
 import { resolveLinkToDoc } from '@affine/core/modules/navigation';

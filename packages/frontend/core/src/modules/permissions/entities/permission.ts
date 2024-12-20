@@ -16,8 +16,8 @@ import {
 import { EMPTY, exhaustMap, mergeMap } from 'rxjs';
 
 import { isBackendError, isNetworkError } from '../../cloud';
-import type { WorkspacePermissionStore } from '../stores/permission';
 import type { WorkspaceService } from '../../workspace';
+import type { WorkspacePermissionStore } from '../stores/permission';
 
 const logger = new DebugLogger('affine:workspace-permission');
 

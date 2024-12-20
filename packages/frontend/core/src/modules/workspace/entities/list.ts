@@ -1,7 +1,7 @@
-import { combineLatest, map, of, switchMap } from 'rxjs';
-
 import { Entity } from '@toeverything/infra';
 import { LiveData } from '@toeverything/infra';
+import { combineLatest, map, of, switchMap } from 'rxjs';
+
 import type { WorkspaceMetadata } from '../metadata';
 import type { WorkspaceFlavoursService } from '../services/flavours';
 

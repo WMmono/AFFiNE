@@ -19,15 +19,15 @@ import {
   SessionStorageGlobalSessionState,
 } from './impls/storage';
 import {
-  GlobalCacheService,
-  GlobalSessionStateService,
-  GlobalStateService,
-} from './services/global';
-import {
   GlobalCache,
   GlobalSessionState,
   GlobalState,
 } from './providers/global';
+import {
+  GlobalCacheService,
+  GlobalSessionStateService,
+  GlobalStateService,
+} from './services/global';
 
 export const configureGlobalStorageModule = (framework: Framework) => {
   framework.service(GlobalStateService, [GlobalState]);

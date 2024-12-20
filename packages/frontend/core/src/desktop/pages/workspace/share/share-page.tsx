@@ -20,7 +20,10 @@ import {
 import { PeekViewManagerModal } from '@affine/core/modules/peek-view';
 import { ShareReaderService } from '@affine/core/modules/share-doc';
 import { ViewIcon, ViewTitle } from '@affine/core/modules/workbench';
-import { Workspace, WorkspacesService } from '@affine/core/modules/workspace';
+import {
+  type Workspace,
+  WorkspacesService,
+} from '@affine/core/modules/workspace';
 import { CloudBlobStorage } from '@affine/core/modules/workspace-engine';
 import { useI18n } from '@affine/i18n';
 import {

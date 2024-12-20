@@ -1,11 +1,11 @@
 import { OnEvent, Service } from '@toeverything/infra';
 import { Manager } from 'socket.io-client';
 
+import { ApplicationStarted } from '../../lifecycle';
 import { AccountChanged } from '../events/account-changed';
 import type { WebSocketAuthProvider } from '../provider/websocket-auth';
 import type { AuthService } from './auth';
 import type { ServerService } from './server';
-import { ApplicationStarted } from '../../lifecycle';
 
 @OnEvent(AccountChanged, e => e.update)
 @OnEvent(ApplicationStarted, e => e.update)

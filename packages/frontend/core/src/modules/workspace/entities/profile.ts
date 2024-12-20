@@ -1,7 +1,4 @@
 import { DebugLogger } from '@affine/debug';
-import { isEqual } from 'lodash-es';
-import { catchError, EMPTY, exhaustMap, mergeMap } from 'rxjs';
-
 import { Entity } from '@toeverything/infra';
 import {
   effect,
@@ -10,6 +7,9 @@ import {
   onComplete,
   onStart,
 } from '@toeverything/infra';
+import { isEqual } from 'lodash-es';
+import { catchError, EMPTY, exhaustMap, mergeMap } from 'rxjs';
+
 import type { WorkspaceMetadata } from '../metadata';
 import type { WorkspaceFlavourProvider } from '../providers/flavour';
 import type { WorkspaceFlavoursService } from '../services/flavours';

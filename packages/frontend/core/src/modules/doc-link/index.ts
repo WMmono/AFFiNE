@@ -1,12 +1,12 @@
 import { type Framework } from '@toeverything/infra';
 
+import { DocScope } from '../doc/scopes/doc';
+import { DocService } from '../doc/services/doc';
 import { DocsSearchService } from '../docs-search';
+import { WorkspaceScope } from '../workspace';
 import { DocBacklinks } from './entities/doc-backlinks';
 import { DocLinks } from './entities/doc-links';
 import { DocLinksService } from './services/doc-links';
-import { DocScope } from '../doc/scopes/doc';
-import { DocService } from '../doc/services/doc';
-import { WorkspaceScope } from '../workspace';
 
 export type { Backlink } from './entities/doc-backlinks';
 export type { Link } from './entities/doc-links';

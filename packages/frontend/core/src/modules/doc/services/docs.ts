@@ -4,10 +4,10 @@ import type { DocMode } from '@blocksuite/affine/blocks';
 import type { DeltaInsert } from '@blocksuite/affine/inline';
 import type { AffineTextAttributes } from '@blocksuite/affine-shared/types';
 import {
+  type DocProps,
   initDocFromProps,
   ObjectPool,
   Service,
-  type DocProps,
 } from '@toeverything/infra';
 
 import type { Doc } from '../entities/doc';

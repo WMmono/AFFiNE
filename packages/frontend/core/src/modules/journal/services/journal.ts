@@ -3,9 +3,9 @@ import type { DocProps } from '@toeverything/infra';
 import { initDocFromProps, LiveData, Service } from '@toeverything/infra';
 import dayjs from 'dayjs';
 
+import type { DocsService } from '../../doc';
 import type { EditorSettingService } from '../../editor-setting';
 import type { JournalStore } from '../store/journal';
-import type { DocsService } from '../../doc';
 
 export type MaybeDate = Date | string | number;
 

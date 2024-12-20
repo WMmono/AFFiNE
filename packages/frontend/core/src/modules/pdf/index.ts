@@ -1,9 +1,9 @@
 import type { Framework } from '@toeverything/infra';
 
+import { WorkspaceScope } from '../workspace';
 import { PDF } from './entities/pdf';
 import { PDFPage } from './entities/pdf-page';
 import { PDFService } from './services/pdf';
-import { WorkspaceScope } from '../workspace';
 
 export function configurePDFModule(framework: Framework) {
   framework

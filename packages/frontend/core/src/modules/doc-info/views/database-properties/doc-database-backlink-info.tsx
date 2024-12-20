@@ -5,6 +5,7 @@ import {
   PropertyName,
 } from '@affine/component';
 import { AffinePageReference } from '@affine/core/components/affine/reference-link';
+import { DocService } from '@affine/core/modules/doc';
 import { useI18n } from '@affine/i18n';
 import type { DatabaseBlockDataSource } from '@blocksuite/affine/blocks';
 import { DatabaseTableViewIcon, PageIcon } from '@blocksuite/icons/rc';
@@ -16,7 +17,6 @@ import { DocDatabaseBacklinksService } from '../../services/doc-database-backlin
 import type { DatabaseRow, DatabaseValueCell } from '../../types';
 import { DatabaseRendererTypes } from './constant';
 import * as styles from './doc-database-backlink-info.css';
-import { DocService } from '@affine/core/modules/doc';
 
 type CellConfig =
   (typeof DatabaseRendererTypes)[keyof typeof DatabaseRendererTypes];

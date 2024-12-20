@@ -14,7 +14,7 @@ import {
 } from '@affine/graphql';
 import { Store } from '@toeverything/infra';
 
-import { GlobalCache } from '../../storage';
+import type { GlobalCache } from '../../storage';
 import type { UrlService } from '../../url';
 import type { SubscriptionType } from '../entities/subscription';
 import type { GraphQLService } from '../services/graphql';

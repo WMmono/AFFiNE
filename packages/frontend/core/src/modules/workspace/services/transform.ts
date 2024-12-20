@@ -1,7 +1,7 @@
 import { assertEquals } from '@blocksuite/affine/global/utils';
+import { Service } from '@toeverything/infra';
 import { applyUpdate } from 'yjs';
 
-import { Service } from '@toeverything/infra';
 import { transformWorkspaceDBLocalToCloud } from '../../db';
 import type { Workspace } from '../entities/workspace';
 import type { WorkspaceMetadata } from '../metadata';

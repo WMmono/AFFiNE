@@ -1,11 +1,11 @@
 import { type Framework } from '@toeverything/infra';
 
+import { WorkspaceDBService } from '../db';
+import { WorkspaceScope } from '../workspace';
 import { FolderNode } from './entities/folder-node';
 import { FolderTree } from './entities/folder-tree';
 import { OrganizeService } from './services/organize';
 import { FolderStore } from './stores/folder';
-import { WorkspaceDBService } from '../db';
-import { WorkspaceScope } from '../workspace';
 
 export type { FolderNode } from './entities/folder-node';
 export { OrganizeService } from './services/organize';

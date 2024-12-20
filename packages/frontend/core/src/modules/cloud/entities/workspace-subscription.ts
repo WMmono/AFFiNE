@@ -13,7 +13,7 @@ import {
 } from '@toeverything/infra';
 import { EMPTY, mergeMap } from 'rxjs';
 
-import { WorkspaceService } from '../../workspace';
+import type { WorkspaceService } from '../../workspace';
 import { isBackendError, isNetworkError } from '../error';
 import type { WorkspaceServerService } from '../services/workspace-server';
 import { SubscriptionStore } from '../stores/subscription';

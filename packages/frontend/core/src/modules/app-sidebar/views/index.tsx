@@ -285,7 +285,6 @@ const RandomBars = ({ count, header }: { count: number; header?: boolean }) => {
         />
       ) : null}
       {Array.from({ length: count }).map((_, index) => (
-         
         <RandomBar key={index} />
       ))}
     </div>

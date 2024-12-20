@@ -6,6 +6,11 @@ import {
   useConfirmModal,
 } from '@affine/component';
 import { MoveToTrash } from '@affine/core/components/page-list';
+import {
+  type DocRecord,
+  DocService,
+  DocsService,
+} from '@affine/core/modules/doc';
 import { DocDisplayMetaService } from '@affine/core/modules/doc-display-meta';
 import { JournalService } from '@affine/core/modules/journal';
 import { WorkbenchLink } from '@affine/core/modules/workbench';
@@ -15,11 +20,6 @@ import { useLiveData, useService } from '@toeverything/infra';
 import { type MouseEvent, useCallback, useMemo } from 'react';
 
 import * as styles from './journal-conflicts.css';
-import {
-  DocService,
-  DocsService,
-  type DocRecord,
-} from '@affine/core/modules/doc';
 
 export const ResolveConflictOperations = ({
   docRecord,

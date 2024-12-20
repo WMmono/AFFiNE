@@ -24,12 +24,12 @@ import { html } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import type { WorkspaceDialogService } from '../../dialogs';
+import type { DocsService } from '../../doc';
 import type { DocDisplayMetaService } from '../../doc-display-meta';
 import type { DocsSearchService } from '../../docs-search';
 import type { EditorSettingService } from '../../editor-setting';
 import { type JournalService, suggestJournalDate } from '../../journal';
 import type { RecentDocsService } from '../../quicksearch';
-import type { DocsService } from '../../doc';
 import type { WorkspaceService } from '../../workspace';
 
 const MAX_DOCS = 3;

@@ -8,11 +8,11 @@ import type { DocMode } from '@blocksuite/affine/blocks';
 import { Entity, LiveData } from '@toeverything/infra';
 import Fuse from 'fuse.js';
 
+import type { GlobalContextService } from '../../global-context';
 import type { QuickSearchSession } from '../providers/quick-search-provider';
 import type { QuickSearchGroup } from '../types/group';
 import type { QuickSearchItem } from '../types/item';
 import { highlighter } from '../utils/highlighter';
-import type { GlobalContextService } from '../../global-context';
 
 const categories = {
   'affine:recent': {

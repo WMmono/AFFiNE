@@ -1,6 +1,6 @@
 import type { DocMode, RootBlockModel } from '@blocksuite/affine/blocks';
-
 import { Entity } from '@toeverything/infra';
+
 import type { WorkspaceService } from '../../workspace';
 import type { DocScope } from '../scopes/doc';
 import type { DocsStore } from '../stores/docs';

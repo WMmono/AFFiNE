@@ -1,10 +1,10 @@
 import { DocCollection } from '@blocksuite/affine/store';
+import { Entity } from '@toeverything/infra';
+import { LiveData } from '@toeverything/infra';
 import { nanoid } from 'nanoid';
 import { Observable } from 'rxjs';
 import type { Awareness } from 'y-protocols/awareness.js';
 
-import { Entity } from '@toeverything/infra';
-import { LiveData } from '@toeverything/infra';
 import { WorkspaceDBService } from '../../db';
 import { getAFFiNEWorkspaceSchema } from '../global-schema';
 import type { WorkspaceScope } from '../scopes/workspace';

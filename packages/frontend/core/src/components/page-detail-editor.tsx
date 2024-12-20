@@ -17,7 +17,6 @@ import { BlockSuiteEditor as Editor } from './blocksuite/block-suite-editor';
 import * as styles from './page-detail-editor.css';
 
 declare global {
-   
   var currentEditor: AffineEditorContainer | undefined;
 }
 

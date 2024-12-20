@@ -1,8 +1,8 @@
 import type { DocMode } from '@blocksuite/affine/blocks';
 import type { DocMeta } from '@blocksuite/affine/store';
-
 import { Entity } from '@toeverything/infra';
 import { LiveData } from '@toeverything/infra';
+
 import type { DocProperties } from '../../db';
 import type { DocPropertiesStore } from '../stores/doc-properties';
 import type { DocsStore } from '../stores/docs';

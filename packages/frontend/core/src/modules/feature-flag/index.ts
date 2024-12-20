@@ -1,4 +1,5 @@
 import type { Framework } from '@toeverything/infra';
+
 import { GlobalStateService } from '../storage';
 import { Flags } from './entities/flags';
 import { FeatureFlagService } from './services/feature-flag';

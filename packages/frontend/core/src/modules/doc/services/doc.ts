@@ -1,4 +1,5 @@
 import { Service } from '@toeverything/infra';
+
 import { Doc } from '../entities/doc';
 
 export class DocService extends Service {

@@ -27,6 +27,7 @@ import {
   Text as YText,
 } from 'yjs';
 
+import { getAFFiNEWorkspaceSchema } from '../../workspace';
 import type { BlockIndexSchema, DocIndexSchema } from '../schema';
 import type {
   WorkerIngoingMessage,
@@ -34,7 +35,6 @@ import type {
   WorkerOutgoingMessage,
   WorkerOutput,
 } from './types';
-import { getAFFiNEWorkspaceSchema } from '../../workspace';
 
 const blocksuiteSchema = getAFFiNEWorkspaceSchema();
 

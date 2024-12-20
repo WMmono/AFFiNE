@@ -5,8 +5,7 @@ import {
 } from '@affine/graphql';
 import { Store } from '@toeverything/infra';
 
-import { GlobalState } from '../../storage';
-
+import type { GlobalState } from '../../storage';
 import type { AuthSessionInfo } from '../entities/session';
 import type { FetchService } from '../services/fetch';
 import type { GraphQLService } from '../services/graphql';

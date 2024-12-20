@@ -12,8 +12,8 @@ import {
 import { EMPTY, map, mergeMap, switchMap } from 'rxjs';
 
 import { isBackendError, isNetworkError } from '../../cloud';
-import type { WorkspaceMembersStore } from '../stores/members';
 import type { WorkspaceService } from '../../workspace';
+import type { WorkspaceMembersStore } from '../stores/members';
 
 export type Member =
   GetMembersByWorkspaceIdQuery['workspace']['members'][number];

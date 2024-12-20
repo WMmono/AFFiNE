@@ -1,5 +1,5 @@
 import { IconButton, Menu } from '@affine/component';
-import { DocRecord, DocsService } from '@affine/core/modules/doc';
+import { type DocRecord, DocsService } from '@affine/core/modules/doc';
 import { DocDisplayMetaService } from '@affine/core/modules/doc-display-meta';
 import { JournalService } from '@affine/core/modules/journal';
 import { WorkbenchLink } from '@affine/core/modules/workbench';

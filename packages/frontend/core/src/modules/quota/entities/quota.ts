@@ -16,8 +16,8 @@ import bytes from 'bytes';
 import { EMPTY, map, mergeMap } from 'rxjs';
 
 import { isBackendError, isNetworkError } from '../../cloud';
-import type { WorkspaceQuotaStore } from '../stores/quota';
 import type { WorkspaceService } from '../../workspace';
+import type { WorkspaceQuotaStore } from '../stores/quota';
 
 type QuotaType = WorkspaceQuotaQuery['workspace']['quota'];
 

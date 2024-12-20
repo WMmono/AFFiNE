@@ -9,9 +9,9 @@ export { NavigationButtons } from './view/navigation-buttons';
 import { type Framework } from '@toeverything/infra';
 
 import { WorkbenchService } from '../workbench/services/workbench';
+import { WorkspaceScope } from '../workspace';
 import { Navigator } from './entities/navigator';
 import { NavigatorService } from './services/navigator';
-import { WorkspaceScope } from '../workspace';
 
 export function configureNavigationModule(framework: Framework) {
   framework

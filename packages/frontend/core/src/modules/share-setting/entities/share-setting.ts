@@ -13,8 +13,8 @@ import {
 import { EMPTY, exhaustMap, mergeMap } from 'rxjs';
 
 import { isBackendError, isNetworkError } from '../../cloud';
-import type { WorkspaceShareSettingStore } from '../stores/share-setting';
 import type { WorkspaceService } from '../../workspace';
+import type { WorkspaceShareSettingStore } from '../stores/share-setting';
 
 type EnableAi = GetWorkspaceConfigQuery['workspace']['enableAi'];
 type EnableUrlPreview =

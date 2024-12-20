@@ -1,7 +1,7 @@
-import { NEVER } from 'rxjs';
-
 import { Entity } from '@toeverything/infra';
 import { LiveData } from '@toeverything/infra';
+import { NEVER } from 'rxjs';
+
 import type { GlobalStateService } from '../../storage';
 import { AFFINE_FLAGS } from '../constant';
 import type { FlagInfo } from '../types';

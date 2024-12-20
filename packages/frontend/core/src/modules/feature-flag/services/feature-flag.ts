@@ -1,6 +1,6 @@
+import { OnEvent, Service } from '@toeverything/infra';
 import { distinctUntilChanged, skip } from 'rxjs';
 
-import { OnEvent, Service } from '@toeverything/infra';
 import { ApplicationStarted } from '../../lifecycle';
 import type { Workspace } from '../../workspace';
 import { WorkspaceInitialized } from '../../workspace/events';

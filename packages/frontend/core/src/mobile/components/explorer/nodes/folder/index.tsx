@@ -13,10 +13,12 @@ import type {
   NodeOperation,
 } from '@affine/core/modules/explorer';
 import { CompatibleFavoriteItemsAdapter } from '@affine/core/modules/favorite';
+import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import {
   type FolderNode,
   OrganizeService,
 } from '@affine/core/modules/organize';
+import { WorkspaceService } from '@affine/core/modules/workspace';
 import { useI18n } from '@affine/i18n';
 import track from '@affine/track';
 import {
@@ -40,8 +42,6 @@ import { ExplorerDocNode } from '../doc';
 import { ExplorerTagNode } from '../tag';
 import { FolderCreateTip, FolderRenameSubMenu } from './dialog';
 import { FavoriteFolderOperation } from './operations';
-import { WorkspaceService } from '@affine/core/modules/workspace';
-import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 
 export const ExplorerFolderNode = ({
   nodeId,

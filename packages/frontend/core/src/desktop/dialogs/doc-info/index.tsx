@@ -2,7 +2,7 @@ import { Modal, Scrollable } from '@affine/component';
 import { BlocksuiteHeaderTitle } from '@affine/core/components/blocksuite/block-suite-header/title';
 import type { DialogComponentProps } from '@affine/core/modules/dialogs';
 import type { WORKSPACE_DIALOG_SCHEMA } from '@affine/core/modules/dialogs/constant';
-import { Doc, DocsService } from '@affine/core/modules/doc';
+import { type Doc, DocsService } from '@affine/core/modules/doc';
 import { FrameworkScope, useService } from '@toeverything/infra';
 import { useEffect, useState } from 'react';
 

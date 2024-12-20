@@ -34,9 +34,9 @@ declare global {
   /**
    * @internal debug only
    */
-   
+
   var currentWorkspace: Workspace | undefined;
-   
+
   var exportWorkspaceSnapshot: (docs?: string[]) => Promise<void>;
    
   var importWorkspaceSnapshot: () => Promise<void>;

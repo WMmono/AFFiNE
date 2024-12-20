@@ -1,5 +1,5 @@
 import { Skeleton } from '@affine/component';
-import { Doc, DocsService } from '@affine/core/modules/doc';
+import { type Doc, DocsService } from '@affine/core/modules/doc';
 import { type AttachmentBlockModel } from '@blocksuite/affine/blocks';
 import { FrameworkScope, useLiveData, useService } from '@toeverything/infra';
 import { type ReactElement, useLayoutEffect, useState } from 'react';

@@ -1,6 +1,6 @@
+import { Store } from '@toeverything/infra';
 import { map } from 'rxjs';
 
-import { Store } from '@toeverything/infra';
 import type { GlobalCache } from '../../storage';
 import type { WorkspaceProfileInfo } from '../entities/profile';
 

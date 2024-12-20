@@ -1,4 +1,5 @@
 import { Service } from '@toeverything/infra';
+
 import { Workspace } from '../entities/workspace';
 
 export class WorkspaceService extends Service {
