@@ -16,7 +16,7 @@ import {
   getAFFiNEWorkspaceSchema,
   type WorkspaceEngineProvider,
   type WorkspaceFlavourProvider,
-  WorkspaceFlavoursProvider,
+  type WorkspaceFlavoursProvider,
   type WorkspaceMetadata,
   type WorkspaceProfileInfo,
 } from '../../workspace';

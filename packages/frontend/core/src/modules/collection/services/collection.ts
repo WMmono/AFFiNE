@@ -7,7 +7,7 @@ import { LiveData, Service } from '@toeverything/infra';
 import { Observable } from 'rxjs';
 import { Array as YArray } from 'yjs';
 
-import { WorkspaceService } from '../../workspace';
+import type { WorkspaceService } from '../../workspace';
 
 const SETTING_KEY = 'setting';
 

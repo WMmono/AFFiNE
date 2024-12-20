@@ -36,10 +36,10 @@ import {
 import type { GlobalState } from '../../storage';
 import {
   getAFFiNEWorkspaceSchema,
-  Workspace,
+  type Workspace,
   type WorkspaceEngineProvider,
   type WorkspaceFlavourProvider,
-  WorkspaceFlavoursProvider,
+  type WorkspaceFlavoursProvider,
   type WorkspaceMetadata,
   type WorkspaceProfileInfo,
 } from '../../workspace';

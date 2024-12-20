@@ -5,7 +5,8 @@ import { isEmpty, omit } from 'lodash-es';
 import { map, type Observable, switchMap } from 'rxjs';
 import { z } from 'zod';
 
-import { WorkspaceEngineBeforeStart, WorkspaceService } from '../../workspace';
+import type { WorkspaceService } from '../../workspace';
+import { WorkspaceEngineBeforeStart } from '../../workspace';
 import { DocsIndexer } from '../entities/docs-indexer';
 
 @OnEvent(WorkspaceEngineBeforeStart, s => s.handleWorkspaceEngineBeforeStart)

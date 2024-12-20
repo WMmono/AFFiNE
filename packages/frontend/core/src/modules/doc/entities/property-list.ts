@@ -1,8 +1,8 @@
 import {
   Entity,
   generateFractionalIndexingKeyBetween,
+  LiveData,
 } from '@toeverything/infra';
-import { LiveData } from '@toeverything/infra';
 
 import type { DocCustomPropertyInfo } from '../../db/schema/schema';
 import type { DocPropertiesStore } from '../stores/doc-properties';

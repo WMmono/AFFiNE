@@ -228,6 +228,7 @@ export function revertUpdate(
     snapshotStateVector
   );
   const undoManager = new UndoManager(
+    // oxlint-disable array-callback-return
     [...snapshotDoc.share.keys()].map(key => {
       const type = getMetadata(key);
       if (type === 'Text') {

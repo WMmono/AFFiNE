@@ -1,5 +1,5 @@
 import {
-  Workspace,
+  type Workspace,
   type WorkspaceMetadata,
   WorkspacesService,
 } from '@affine/core/modules/workspace';

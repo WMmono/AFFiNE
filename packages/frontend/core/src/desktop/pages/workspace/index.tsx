@@ -34,11 +34,11 @@ declare global {
   /**
    * @internal debug only
    */
-
+  // oxlint-disable-next-line no-var
   var currentWorkspace: Workspace | undefined;
-
+  // oxlint-disable-next-line no-var
   var exportWorkspaceSnapshot: (docs?: string[]) => Promise<void>;
-   
+  // oxlint-disable-next-line no-var
   var importWorkspaceSnapshot: () => Promise<void>;
   interface WindowEventMap {
     'affine:workspace:change': CustomEvent<{ id: string }>;

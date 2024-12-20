@@ -1,7 +1,8 @@
 import { OnEvent, Service } from '@toeverything/infra';
 
 import { DocsService } from '../../doc';
-import { Workspace, WorkspaceInitialized } from '../../workspace';
+import type { Workspace } from '../../workspace';
+import { WorkspaceInitialized } from '../../workspace';
 import {
   EditorSetting,
   type EditorSettingExt,

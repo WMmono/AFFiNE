@@ -1,5 +1,4 @@
-import { Store } from '@toeverything/infra';
-import { yjsObserveByPath, yjsObserveDeep } from '@toeverything/infra';
+import { Store, yjsObserveByPath, yjsObserveDeep } from '@toeverything/infra';
 import { differenceBy, isNil, omitBy } from 'lodash-es';
 import { combineLatest, map, switchMap } from 'rxjs';
 import { AbstractType as YAbstractType } from 'yjs';

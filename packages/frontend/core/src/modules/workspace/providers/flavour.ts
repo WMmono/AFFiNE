@@ -1,11 +1,11 @@
 import type { DocCollection } from '@blocksuite/affine/store';
-import type { LiveData } from '@toeverything/infra';
 import {
   type AwarenessConnection,
   type BlobStorage,
   createIdentifier,
   type DocServer,
   type DocStorage,
+  type LiveData,
 } from '@toeverything/infra';
 
 import type { WorkspaceProfileInfo } from '../entities/profile';

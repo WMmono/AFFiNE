@@ -1,7 +1,7 @@
 import { DebugLogger } from '@affine/debug';
-import { Entity } from '@toeverything/infra';
 import {
   effect,
+  Entity,
   fromPromise,
   LiveData,
   onComplete,

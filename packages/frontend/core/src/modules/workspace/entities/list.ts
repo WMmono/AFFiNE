@@ -1,5 +1,4 @@
-import { Entity } from '@toeverything/infra';
-import { LiveData } from '@toeverything/infra';
+import { Entity, LiveData } from '@toeverything/infra';
 import { combineLatest, map, of, switchMap } from 'rxjs';
 
 import type { WorkspaceMetadata } from '../metadata';

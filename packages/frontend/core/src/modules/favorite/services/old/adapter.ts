@@ -154,6 +154,7 @@ class WorkspacePropertiesAdapter {
   setJournalPageDateString(id: string, date: string) {
     this.ensurePageProperties(id);
     const pageProperties = this.pageProperties?.[id];
+    // oxlint-disable-next-line no-non-null-assertion
     pageProperties!.system[PageSystemPropertyId.Journal].value = date;
   }
 

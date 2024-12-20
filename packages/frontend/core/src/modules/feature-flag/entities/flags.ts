@@ -1,5 +1,4 @@
-import { Entity } from '@toeverything/infra';
-import { LiveData } from '@toeverything/infra';
+import { Entity, LiveData } from '@toeverything/infra';
 import { NEVER } from 'rxjs';
 
 import type { GlobalStateService } from '../../storage';

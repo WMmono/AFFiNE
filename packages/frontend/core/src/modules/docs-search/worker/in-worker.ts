@@ -27,7 +27,7 @@ import {
   Text as YText,
 } from 'yjs';
 
-import { getAFFiNEWorkspaceSchema } from '../../workspace';
+import { getAFFiNEWorkspaceSchema } from '../../workspace/global-schema';
 import type { BlockIndexSchema, DocIndexSchema } from '../schema';
 import type {
   WorkerIngoingMessage,
