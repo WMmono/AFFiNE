@@ -374,10 +374,6 @@ export const USER_FRIENDLY_ERRORS = {
     args: { spaceId: 'string' },
     message: ({ spaceId }) => `Owner of Space ${spaceId} not found.`,
   },
-  cant_change_space_owner: {
-    type: 'action_forbidden',
-    message: 'You are not allowed to change the owner of a Space.',
-  },
   doc_not_found: {
     type: 'resource_not_found',
     args: { spaceId: 'string', docId: 'string' },

@@ -331,7 +331,10 @@ export class TeamWorkspaceResolver {
       }
     } catch (e) {
       this.logger.error('failed to invite user', e);
-      if (e instanceof UserFriendlyError) return e;
+      // pass through user friendly error
+      if (e instanceof UserFriendlyError) {
+        return e;
+      }
       return new TooManyRequest();
     }
   }
